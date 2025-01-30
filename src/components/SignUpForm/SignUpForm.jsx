@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function SignUpForm() {
+function SignUpForm({ setToken }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-
+  const [success, setSuccess] = useState("");
+  console.log(username);
   async function handleSubmit(e) {
     e.preventDefault();
     try {
@@ -13,18 +14,26 @@ function SignUpForm() {
         "https://fsa-jwt-practice.herokuapp.com/signup",
         { username, password }
       );
+      console.log(data.data);
+      if (data.data.success) {
+        setToken(data.data.token);
+        setSuccess(true);
+        setUsername("");
+        setPassword("");
+      }
     } catch (err) {
       console.error(err.message);
     }
   }
-  console.log(username);
+
   return (
     <div>
       <h2>SignupForm</h2>
       {error?.message && <p>Error Signing Up</p>}
+      {success && <p>Signed Up Successfully</p>}
       <form onSubmit={handleSubmit}>
         <label>
-          <p>Username</p>
+          <p>Username:</p>
           <input
             type="text"
             value={username}
@@ -32,7 +41,7 @@ function SignUpForm() {
           />
         </label>
         <label>
-          <p>Password</p>
+          <p>Password:</p>
           <input
             type="password"
             value={password}
